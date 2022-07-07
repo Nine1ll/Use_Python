@@ -1,7 +1,8 @@
 import random
 import art
 print(art.logo)
-  
+
+#I don't know why push is error
 def number_compare(guess_number, answer_number, remain_attemps) :
   if guess_number > answer_number :
     if attempts !=1 :
