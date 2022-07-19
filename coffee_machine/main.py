@@ -36,11 +36,33 @@ coins = {
     "dimes": 0.10,
     "quarters": 0.25,
 }
-# input("What would you like? ():") 에 입력값이  report일시 ,
-# 지금 기계에 남은 resources + Money 를 보여줘야함,
-#
-# 가격보다 coin을 적게 넣으면, 모두 환불
-# 가격보다 많이 넣으면 남은 돈을 계산해서 환불해줌.
+
+
+def is_sufficient(ordered_menu):
+    if ordered_menu == "espresso":
+        if resources["water"] < MENU[ordered_menu]["ingredients"]["water"] or resources["coffee"] < MENU[ordered_menu]["ingredients"]["coffee"]:
+            print(f"Sorry there is not enough resources")
+            return False
+    else:
+        for resource in resources:
+            if resource == "Money":
+                return
+            else:
+                if resources[resource] < MENU[ordered_menu]["ingredients"][resource]:
+                    print(f"Sorry there is not enough {resource}")
+                    return False
+
+
+def resources_management(ordered_menu):
+    if is_sufficient(ordered_menu):
+        if ordered_menu == "espresso":
+            resources["water"] -= MENU[ordered_menu]["ingredients"]["water"]
+            resources["coffee"] -= MENU[ordered_menu]["ingredients"]["coffee"]
+        else:
+            resources["water"] -= MENU[ordered_menu]["ingredients"]["water"]
+            resources["coffee"] -= MENU[ordered_menu]["ingredients"]["coffee"]
+            resources["milk"] -= MENU[ordered_menu]["ingredients"]["milk"]
+        resources["Money"] += MENU[ordered_menu]["cost"]
 
 
 def insert_coin():
@@ -65,11 +87,24 @@ def changes(ordered_menu_price, paid_money):
         print(f"Here is ${change} in change.")
 
 
-order = input("  What would you like? (espresso/latte/cappuccino): ")
-insert_price = insert_coin()
+resources["Money"] = 0
 
-if refund(order, insert_price):
-    print("Sorry that's not enough money. Money refunded.")
-else:
-    changes(MENU[order]["cost"], insert_price)
-    print(f"Here is {order} ☕. Enjoy!")
+while True:
+    order = input("  What would you like? (espresso/latte/cappuccino): ")
+    if order == "break":
+        break
+    else:
+        if order == "report":
+            print(
+                f" Water: {resources['water']}\n Milk: {resources['milk']}\n Coffee: {resources['coffee']} \n Money: {resources['Money']}$")
+        else:
+            insert_price = insert_coin()
+            if refund(order, insert_price):
+                print("Sorry that's not enough money. Money refunded.")
+            else:
+                changes(MENU[order]["cost"], insert_price)
+                resources_management(order)
+                print(f"Here is {order} ☕. Enjoy!")
+
+
+print("Thank you for use our service! :)")
