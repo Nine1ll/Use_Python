@@ -27,3 +27,10 @@ for i in range(len(name_list)):
         ready_to_send.write(letter_format_temp)
 
 name_file.close()
+
+# with open("./Input/Names/invited_names.txt", mode="r") as names_file:
+#     names = names_file.readlines()
+#
+# for name in names:
+#     stripped_name = name.strip()
+#     print(stripped_name)

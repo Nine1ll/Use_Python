@@ -20,3 +20,7 @@ ex) kim gwAngYoung => Kim Gwangyoung
 <p>
 Add mail merge project
 </p>
+<p>
+- string.split() can delete "\n"
+</p>
+<p>- readline() vs readlines()</p>
