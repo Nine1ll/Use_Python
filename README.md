@@ -24,3 +24,22 @@ Add mail merge project
 - string.split() can delete "\n"
 </p>
 <p>- readline() vs readlines()</p>
+
+<h3>
+< 02.08.2022 Tue >
+</h3>
+<p><ol>list comprehension </ol></p>
+<p>number = [1,2,3]</p>
+<p>new_num = []</p>
+<p>for n in list -> new_list = [new_item for item in list]</p>
+
+<h3>
+< 03.08.2022 Wen >
+</h3>
+<p><ol>dictionary comprehension </ol></p>
+<p>for n in list -> new_dict = {new_key:new_item for new_item in list}</p>
+<p>new_dict = {new_key:new_item for (key, value) in dictionary.items()}</p>
+<p>
+<h4>In pandas</h4></p>
+<p><h5>with "iterrows"</h5></p>
+<p>for (index, row) in data_frame.iterrows():</p>
