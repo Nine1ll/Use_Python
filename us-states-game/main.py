@@ -22,6 +22,12 @@ while len(guessed_states) < 50:
     answer_state = screen.textinput(title=f"{len(guessed_states)}/{len(states['state'].to_list())} states Correct",
                                     prompt="What's another state's name?")
     if answer_state.title() == "Exit":
+        incorrect_state = [state for state in states["state"].to_list() if state not in guessed_states]
+        incorrect_states = {
+            "State": incorrect_state
+        }
+        states_to_learn = pandas.DataFrame(incorrect_states)
+        states_to_learn.to_csv("states_to_learn")
         break
     elif answer_state.title() in states["state"].to_list():
         state_name = answer_state.title()
@@ -30,15 +36,3 @@ while len(guessed_states) < 50:
         write_state_name(state_name, state_xcor, state_ycor)
         guessed_states.append(state_name)
 
-incorrect_state = []
-
-for state in states["state"].to_list():
-    if state not in guessed_states:
-        incorrect_state.append(state)
-
-incorrect_states = {
-    "State": incorrect_state
-}
-
-states_to_learn = pandas.DataFrame(incorrect_states)
-states_to_learn.to_csv("states_to_learn")
