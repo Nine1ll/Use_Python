@@ -44,3 +44,15 @@ Add mail merge project
 <p><h5>with "iterrows"</h5></p>
 <p>for (index, row) in data_frame.iterrows():</p>
 </div>
+<div>
+<h3>
+< 05.08.2022 Fri >
+</h3>
+<p><h4>동적 타이핑 (Dynamic Typing) </h4>
+변수 안의 콘텐츠를 변경해서 변수의 데이터형을 변경할 수 있는 것 <br>
+예를 들어서 <br>
+a = 3 여기서 type(a) == int 이다. <br>
+하지만 a = "Hi"를 입력하게 되면 type(a) == str이 된다. <br>
+이를 다이나믹 타이핑이라고 한다.
+</p>
+</div>
