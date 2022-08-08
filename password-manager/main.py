@@ -1,10 +1,27 @@
-import random
 from tkinter import *
 from tkinter import messagebox
+from random import choice, randint, shuffle
 import pyperclip
+import json
+
+
+def search():
+    website = website_entry.get()
+
+    try:
+        with open("data.json", "r") as data_file:
+            datas = json.load(data_file)
+            websites_email = datas[website]['email']
+            websites_password = datas[website]['password']
+    except KeyError:
+        messagebox.showinfo(title="No Such Data", message=f"There is no {website}'s data! Please check your Website")
+    except FileNotFoundError:
+        messagebox.showinfo(title="No Data", message="There is no data in the database\nYou should Add first!")
+    else:
+        messagebox.showinfo(title=f"{website}", message=f"Email: {websites_email}\nPassword: {websites_password}")
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
-# Password Generator Project
+#Password Generator Project
 
 
 def generate_password():
@@ -12,33 +29,55 @@ def generate_password():
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 
-    password_list = [random.choice(letters) for _ in range(random.randint(8, 10))]
-    password_list += [random.choice(symbols) for _ in range(random.randint(2, 4))]
-    password_list += [random.choice(numbers) for _ in range(random.randint(2, 4))]
+    password_letters = [choice(letters) for _ in range(randint(8, 10))]
+    password_symbols = [choice(symbols) for _ in range(randint(2, 4))]
+    password_numbers = [choice(numbers) for _ in range(randint(2, 4))]
 
-    random.shuffle(password_list)
+    password_list = password_letters + password_symbols + password_numbers
+    shuffle(password_list)
 
     password = "".join(password_list)
+    password_entry.insert(0, password)
     pyperclip.copy(password)
-    password_input.insert(0, password)
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
 
-def add_to_database():
-    if len(website_input.get()) == 0 or len(password_input.get()) == 0 or len(e_user_input.get()) == 0:
-        messagebox.showwarning(title="Oops", message="Please don't leave a ny fields empty!")
-    else :
-        is_ok = messagebox.askokcancel(title=website,
-                                       message=f"These are the details entered: \nEmail: {e_user_input.get()}\nPassword: {password_input.get()} \n"
-                                               f"Is it ok to save?")
-        if is_ok:
-            with open("password_database.txt", mode="a") as database:
-                database.write(f"{website_input.get()} | {e_user_input.get()} | {password_input.get()}\n")
-                website_input.delete(0, END)
-                e_user_input.delete(0, END)
-                password_input.delete(0, END)
-                e_user_input.insert(END, "@gmail.com")
+def save():
+
+    website = website_entry.get()
+    email = email_entry.get()
+    password = password_entry.get()
+    new_data = {
+        website: {
+        "email": email,
+        "password": password,
+        }
+    }
+
+    if len(website) == 0 or len(password) == 0:
+        messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty.")
+    else:
+        try:
+            with open("data.json", "r") as data_file:
+                # Reading the old data
+                data = json.load(data_file)
+        except FileNotFoundError:
+            with open("data.json","w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            # Updating old data with new data
+            data.update(new_data)
+
+            with open("data.json", "w") as data_file:
+                # Saving updated data
+                json.dump(data, data_file, indent=4)
+        finally:
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
+            email_entry.delete(0, END)
+            email_entry.insert(0, "@gmail.com")
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -46,39 +85,34 @@ window = Tk()
 window.title("Password Manager")
 window.config(padx=50, pady=50)
 
-# Canvas
+canvas = Canvas(height=200, width=200)
+logo_img = PhotoImage(file="logo.png")
+canvas.create_image(100, 100, image=logo_img)
+canvas.grid(row=0, column=1)
 
-canvas = Canvas(width=200, height=200)
-mypass_img = PhotoImage(file="logo.png")
-canvas.create_image(120, 120, image=mypass_img)
-canvas.grid(column=1, row=0)
+#Labels
+website_label = Label(text="Website:")
+website_label.grid(row=1, column=0)
+email_label = Label(text="Email/Username:")
+email_label.grid(row=2, column=0)
+password_label = Label(text="Password:")
+password_label.grid(row=3, column=0)
 
-# Label
+#Entries
+website_entry = Entry(width=21)
+website_entry.grid(row=1, column=1)
+website_entry.focus()
+email_entry = Entry(width=35)
+email_entry.grid(row=2, column=1, columnspan=2)
+email_entry.insert(0, "@gmail.com")
+password_entry = Entry(width=21)
+password_entry.grid(row=3, column=1)
 
-website = Label(text="Website: ")
-website.grid(column=0, row=1)
-e_user = Label(text="Email/Username: ")
-e_user.grid(column=0, row=2)
-passwords = Label(text="Password: ")
-passwords.grid(column=0, row=3)
-
-# Entry
-
-website_input = Entry(width=40)
-website_input.grid(column=1, row=1, columnspan=2)
-website_input.focus()
-e_user_input = Entry(width=40)
-e_user_input.grid(column=1, row=2, columnspan=2)
-e_user_input.insert(END, "@gmail.com")
-password_input = Entry(width=18)
-password_input.grid(column=1, row=3)
-
-# Button
-
-g_password = Button(text="Generate Password", width=18, command=generate_password)
-g_password.grid(column=2, row=3)
-add = Button(text="Add", width=40, command=add_to_database)
-add.grid(column=1, row=4, columnspan=2)
-
-
+# Buttons
+generate_password_button = Button(text="Generate Password", command=generate_password)
+generate_password_button.grid(row=3, column=2)
+add_button = Button(text="Add", width=36, command=save)
+add_button.grid(row=4, column=1, columnspan=2)
+search_button = Button(text="Search", command=search)
+search_button.grid(row=1, column=2)
 window.mainloop()
